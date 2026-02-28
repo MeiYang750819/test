@@ -231,14 +231,18 @@ details details { box-shadow: none; margin-bottom: 0; border-radius: 0; border: 
 /* 版權宣告 Footer (含上方分隔線) */
 .footer { 
   text-align: center; 
-  padding: 40px 20px; 
+  padding: 20px 20px; /* 這裡原本是 40px，改成 20px 讓整個 Footer 往上移，離上面內容近一點 */
   font-size: var(--footer-fontSize); 
   color: var(--footer-textColor); 
   line-height: 1.5; 
-  border-top: 1px solid rgba(255,255,255,0.1); /* 暗黑模式下的淺白分隔線 */
+  border-top: 1px solid rgba(255,255,255,0.1); 
   margin-top: 20px; 
 }
-.footer-logo { display: block; margin: 0 auto 10px; max-width: 100px; } 
+.footer-logo { 
+  display: block; 
+  margin: 0 auto 2px; /* 這裡原本下面是 10px，改成 2px 讓商標跟底下的 v1.0.0 文字靠得非常近 */
+  max-width: 100px; 
+}
 
 /* 更細緻的文字顏色設定 (供評核標準使用) */
 .text-green { color: #10b981; font-weight: bold; }
