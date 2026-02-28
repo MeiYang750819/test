@@ -315,7 +315,7 @@ details details { box-shadow: none; margin-bottom: 0; border-radius: 0; border: 
 }
 
 /* ================================================================
-   【 ✨ 動畫特效專區：飄浮數字與閃爍高光 】
+   【 ✨ 動畫特效專區：飄浮數字與超級閃爍高光 】
    ================================================================ */
 
 /* 滑鼠點擊飄出加分數字 */
@@ -323,8 +323,8 @@ details details { box-shadow: none; margin-bottom: 0; border-radius: 0; border: 
     position: fixed;
     color: #fbbf24;       /* 金色 */
     font-weight: bold;
-    font-size: 22px;
-    pointer-events: none; /* 確保不會擋到後續點擊 */
+    font-size: 24px;      /* 字體稍微加大 */
+    pointer-events: none;
     z-index: 10001;
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     animation: floatUp 2s ease-out forwards;
@@ -332,17 +332,31 @@ details details { box-shadow: none; margin-bottom: 0; border-radius: 0; border: 
 
 @keyframes floatUp {
     0% { opacity: 1; transform: translateY(0) scale(1); }
-    50% { opacity: 1; transform: translateY(-30px) scale(1.3); }
+    50% { opacity: 1; transform: translateY(-30px) scale(1.4); }
     100% { opacity: 0; transform: translateY(-60px) scale(1); }
 }
 
-/* 頂部戰力列晉升閃爍特效 */
+/* 頂部文字與數值的超級晉升閃爍特效 */
 .rank-flash {
-    animation: rankGlow 1.5s ease-in-out forwards;
+    animation: superGlowText 1.5s ease-in-out forwards;
+    display: inline-block; /* 確保 transform 放大有作用 */
 }
 
-@keyframes rankGlow {
-    0% { text-shadow: none; transform: scale(1); }
-    50% { text-shadow: 0 0 20px #fbbf24, 0 0 30px #fbbf24, 0 0 40px #ffffff; transform: scale(1.05); }
-    100% { text-shadow: none; transform: scale(1); }
+@keyframes superGlowText {
+    0% { text-shadow: none; transform: scale(1); color: inherit; }
+    30% { text-shadow: 0 0 20px #fbbf24, 0 0 40px #fbbf24, 0 0 60px #ffffff; transform: scale(1.2); color: #ffffff; }
+    70% { text-shadow: 0 0 20px #fbbf24, 0 0 40px #fbbf24, 0 0 60px #ffffff; transform: scale(1.2); color: #ffffff; }
+    100% { text-shadow: none; transform: scale(1); color: inherit; }
+}
+
+/* 進度條專用的超級閃爍特效 (連外框一起發光) */
+.bar-flash {
+    animation: superGlowBar 1.5s ease-in-out forwards;
+}
+
+@keyframes superGlowBar {
+    0% { box-shadow: none; filter: brightness(1); }
+    30% { box-shadow: 0 0 15px #fbbf24, 0 0 30px #ffffff; filter: brightness(1.5); }
+    70% { box-shadow: 0 0 15px #fbbf24, 0 0 30px #ffffff; filter: brightness(1.5); }
+    100% { box-shadow: none; filter: brightness(1); }
 }
