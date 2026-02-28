@@ -9,25 +9,25 @@
      說明：統一管理全站的漸層底色與字體顏色，方便後續一鍵抽換
      ------------------------------------------------------------ */
   --bg-style-1: linear-gradient(0deg, rgba(43,37,37,1) 0%, rgba(0,0,0,1) 100%); /* 全站主底層背景：由深咖漸變至黑 */
-  --bg-style-2: linear-gradient(180deg, #1a1a1a 0%, #333333 100%);              /* 備用背景：由極深灰漸變至深灰 */
-  --bg-style-3: #262626;                                                        /* 純色背景：用於摺疊選單展開後的底色 */
-  --main-textColor: #FFFFFF;                                                    /* 全站預設主要文字顏色：純白 */
+  --bg-style-2: linear-gradient(180deg, #1a1a1a 0%, #333333 100%);             /* 備用背景：由極深灰漸變至深灰 */
+  --bg-style-3: #262626;                                                      /* 純色背景：用於摺疊選單展開後的底色 */
+  --main-textColor: #FFFFFF;                                                  /* 全站預設主要文字顏色：純白 */
 
   /* ------------------------------------------------------------
      📌 [分頁一：內容說明] 手冊與規範
      ------------------------------------------------------------ */
-  --p1-headerColor: #1a1a1a;          /* 頂部兩層固定列 (極深灰) */
-  --p1-bgColor: var(--bg-style-1);    /* 頁面背景套用漸層1號 */
-  --p1-titleColor: #FFFFFF;           /* 頂部狀態列的文字顏色 */
-  --p1-textColor: #FFFFFF;            /* 內容區的說明文字顏色 */
+  --p1-headerColor: #1a1a1a;         /* 頂部兩層固定列 (極深灰) */
+  --p1-bgColor: var(--bg-style-1);   /* 頁面背景套用漸層1號 */
+  --p1-titleColor: #FFFFFF;          /* 頂部狀態列的文字顏色 */
+  --p1-textColor: #FFFFFF;           /* 內容區的說明文字顏色 */
 
   /* ------------------------------------------------------------
      📌 [分頁二：上傳說明] 視覺化教學
      ------------------------------------------------------------ */
-  --p2-headerColor: #1a1a1a;          /* 頂部兩層固定列 (極深灰) */
-  --p2-bgColor: var(--bg-style-1);    /* 頁面背景套用漸層1號 */
-  --p2-titleColor: #FFFFFF;           /* 頂部狀態列的文字顏色 */
-  --p2-textColor: #FFFFFF;            /* 內容區的說明文字顏色 */
+  --p2-headerColor: #1a1a1a;         /* 頂部兩層固定列 (極深灰) */
+  --p2-bgColor: var(--bg-style-1);   /* 頁面背景套用漸層1號 */
+  --p2-titleColor: #FFFFFF;          /* 頂部狀態列的文字顏色 */
+  --p2-textColor: #FFFFFF;           /* 內容區的說明文字顏色 */
 
   /* ------------------------------------------------------------
      📌 [分頁三：報到流程] 動態闖關區 (未來擴充預留)
@@ -308,4 +308,37 @@ details details { box-shadow: none; margin-bottom: 0; border-radius: 0; border: 
     .progress-track {
         width: 80px;
     }
+}
+
+/* ================================================================
+   【 ✨ 動畫特效專區：飄浮數字與閃爍高光 】
+   ================================================================ */
+
+/* 滑鼠點擊飄出加分數字 */
+.floating-score {
+    position: fixed;
+    color: #fbbf24;       /* 金色 */
+    font-weight: bold;
+    font-size: 22px;
+    pointer-events: none; /* 確保不會擋到後續點擊 */
+    z-index: 10001;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    animation: floatUp 2s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    50% { opacity: 1; transform: translateY(-30px) scale(1.3); }
+    100% { opacity: 0; transform: translateY(-60px) scale(1); }
+}
+
+/* 頂部戰力列晉升閃爍特效 */
+.rank-flash {
+    animation: rankGlow 1.5s ease-in-out forwards;
+}
+
+@keyframes rankGlow {
+    0% { text-shadow: none; transform: scale(1); }
+    50% { text-shadow: 0 0 20px #fbbf24, 0 0 30px #fbbf24, 0 0 40px #ffffff; transform: scale(1.05); }
+    100% { text-shadow: none; transform: scale(1); }
 }
