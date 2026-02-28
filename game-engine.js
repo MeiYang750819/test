@@ -4,11 +4,11 @@
 const GameEngine = {
     state: {
         score: 0,
-        items: ['👕 粗製布衣'], // 更新為新版預設防具
+        items: ['👕 粗製布衣'],
         location: '⛺ 新手村',
         status: '📦 檢整裝備中',
         achievements: [],
-        weaponType: null // 記憶玩家抽到的武器種類
+        weaponType: null
     },
 
     ranks: [
@@ -24,31 +24,41 @@ const GameEngine = {
     init() {
         const saved = localStorage.getItem('hero_progress');
         if (saved) { this.state = JSON.parse(saved); }
-        this.updateUI();
+        this.updateUI(true); // 初始載入強制更新全部文字
     },
 
     save() { localStorage.setItem('hero_progress', JSON.stringify(this.state)); },
 
-    unlock(id, label, scoreGain, action = null) {
-        // 檢查是否重複解鎖
+    // 加入 event 參數來抓取滑鼠座標
+    unlock(event, id, label, scoreGain, action = null) {
         if (this.state.achievements.includes(id)) {
             console.log(`[GameEngine] ${label} 已領取過，不再重覆跳轉。`);
             return;
         }
 
-        // 紀錄加分前的戰力，用來比對是否有晉升
         const oldRank = this.ranks.find(r => this.state.score >= r.min) || this.ranks[this.ranks.length - 1];
         
         this.state.achievements.push(id);
         this.state.score += scoreGain;
 
-        let toastMsg = "";
+        // 🌟 特效 1：滑鼠點擊處飄出金色的 +1 或 +2 (維持2秒)
+        if (event && event.clientX) {
+            const floater = document.createElement('div');
+            floater.className = 'floating-score';
+            floater.innerText = `+${scoreGain}`;
+            floater.style.left = `${event.clientX}px`;
+            floater.style.top = `${event.clientY - 20}px`; // 稍微偏上出現
+            document.body.appendChild(floater);
+            setTimeout(() => floater.remove(), 2000); // 2秒後移除DOM
+        }
 
-        // 動作判定：隨機抽武器 或 升級衣服
+        let toastMsg = "";
+        let hasToast = false;
+
         if (action === 'random_weapon') {
             const weapons = ['🗡️ 精鋼短劍', '🏹 獵人短弓', '🔱 鐵尖長槍'];
             const w = weapons[Math.floor(Math.random() * weapons.length)];
-            this.state.weaponType = w; // 記憶到存檔中
+            this.state.weaponType = w;
             this.state.items.push(w);
             toastMsg = `✨ 拾獲裝備【${w}】，積分+${scoreGain}`;
         } else if (action === 'upgrade_armor') {
@@ -59,37 +69,59 @@ const GameEngine = {
         }
         
         this.save();
-        this.updateUI();
+        
+        // 為了特效，我們先不馬上更新頂部戰力文字，先更新底下的進度與道具即可
+        this.updateUI(false); 
 
-        // 取得加分後的新戰力
         const newRank = this.ranks.find(r => this.state.score >= r.min) || this.ranks[this.ranks.length - 1];
+        const isRankUp = oldRank.title !== newRank.title;
 
-        // 彈窗與滑入通知邏輯
+        // 判定通知與延遲時間
         if (scoreGain >= 2) {
             setTimeout(() => { alert(`🔔 發現隱藏關卡，冒險積分 +${scoreGain}`); }, 100);
-            // 如果觸發大摺疊剛好晉升，0.5秒後滑出晉升通知
-            if (oldRank.title !== newRank.title) {
-                setTimeout(() => { this.showToast(`✨ 戰力晉升：【${newRank.title}】`); }, 500);
-            }
+            hasToast = false; // 大摺疊不觸發右下角滑入通知
         } else if (scoreGain === 1) {
             this.showToast(toastMsg);
-            // 如果觸發小摺疊剛好晉升，等原本的通知 4 秒消失後，緊接著滑出晉升通知
-            if (oldRank.title !== newRank.title) {
-                setTimeout(() => { this.showToast(`✨ 戰力晉升：【${newRank.title}】`); }, 4500);
-            }
+            hasToast = true;
+        }
+
+        // 🌟 特效 2 & 3：判斷是否有晉升，並計算閃爍延遲
+        if (isRankUp) {
+            // 如果有 Toast 就等 4 秒消失後再閃；如果沒有 Toast 就等 1 秒後閃
+            const delayTime = hasToast ? 4000 : 1000;
+            
+            setTimeout(() => {
+                const rankEl = document.getElementById('rank-text');
+                if (rankEl) {
+                    rankEl.classList.add('rank-flash'); // 加入閃爍動畫
+                    
+                    // 在閃爍最高潮 (大約 0.75 秒時) 切換文字
+                    setTimeout(() => {
+                        this.updateRankText(newRank);
+                    }, 750);
+
+                    // 動畫結束後移除 class，以便下次還能閃
+                    setTimeout(() => {
+                        rankEl.classList.remove('rank-flash');
+                    }, 1500);
+                }
+            }, delayTime);
+        } else {
+            // 如果沒升級，直接默默把字體換掉即可 (萬一分數變了但稱號沒變)
+            this.updateRankText(newRank);
         }
     },
 
-    updateUI() {
+    updateUI(forceUpdateRankText = false) {
         const rank = this.ranks.find(r => this.state.score >= r.min) || this.ranks[this.ranks.length - 1];
-        const rankEl = document.getElementById('rank-text');
         const statusTagEl = document.getElementById('status-tag');
         const scoreEl = document.getElementById('score-text');
         const scoreFill = document.getElementById('score-fill');
 
-        if (rankEl) {
-            rankEl.innerHTML = `<span style="color:#fbbf24;">戰力：</span><span style="color:#FFFFFF;">${rank.title}</span>　｜　<span style="color:#fbbf24;">關卡：</span><span style="color:#FFFFFF;">${this.state.location}</span>`;
+        if (forceUpdateRankText) {
+            this.updateRankText(rank);
         }
+
         if (statusTagEl) {
             statusTagEl.innerHTML = `<span style="color:#8ab4f8;">道具：</span><span style="color:#FFFFFF;">${this.state.items.join(' ')}</span>　｜　<span style="color:#8ab4f8;">狀態：</span><span style="color:#FFFFFF;">${this.state.status}</span>`;
         }
@@ -101,8 +133,14 @@ const GameEngine = {
         }
     },
 
+    updateRankText(rankObj) {
+        const rankEl = document.getElementById('rank-text');
+        if (rankEl) {
+            rankEl.innerHTML = `<span style="color:#fbbf24;">戰力：</span><span style="color:#FFFFFF;">${rankObj.title}</span>　｜　<span style="color:#fbbf24;">關卡：</span><span style="color:#FFFFFF;">${this.state.location}</span>`;
+        }
+    },
+
     showToast(msg) {
-        // 移除舊的通知
         const oldToast = document.querySelector('.game-toast');
         if (oldToast) oldToast.remove();
 
@@ -116,7 +154,7 @@ const GameEngine = {
         setTimeout(() => {
             toast.style.transform = 'translateX(150%)';
             setTimeout(() => toast.remove(), 500);
-        }, 4000); // 改為 4 秒消失
+        }, 4000); 
     }
 };
 window.addEventListener('load', () => GameEngine.init());
