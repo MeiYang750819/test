@@ -199,44 +199,4 @@ const GameEngine = {
         const scoreEl = document.getElementById('score-text');
         const scoreFill = document.getElementById('score-fill');
         const progVal = document.getElementById('prog-val');
-        const progFill = document.getElementById('prog-fill');
-
-        if (rankEl && isInit) {
-            rankEl.innerHTML = `<span style="color:#fbbf24;">戰力：</span><span id="dyn-rank" style="color:#FFFFFF;">${rank.title}</span>　｜　<span style="color:#fbbf24;">關卡：</span><span id="dyn-loc" style="color:#FFFFFF;">${this.state.location}</span>`;
-        }
-        if (statusTagEl && isInit) {
-            statusTagEl.innerHTML = `<span style="color:#8ab4f8;">道具：</span><span id="dyn-items" style="color:#FFFFFF;">${this.state.items.join(' ')}</span>　｜　<span style="color:#8ab4f8;">狀態：</span><span id="dyn-status" style="color:#FFFFFF;">${this.state.status}</span>`;
-        }
-        if (scoreEl && isInit) scoreEl.innerText = this.state.score + "分";
-        if (scoreFill && isInit) {
-            scoreFill.style.width = Math.min(this.state.score, 100) + "%";
-            scoreFill.style.backgroundColor = "#fbbf24";
-        }
-        
-        if (isInit) {
-            const currentProg = this.state.currentTrial > 0 ? this.trialsData[this.state.currentTrial].prog : 0;
-            if (progVal) progVal.innerText = currentProg + "%";
-            if (progFill) {
-                progFill.style.width = currentProg + "%";
-                const hue = (currentProg / 100) * 120;
-                progFill.style.backgroundColor = `hsl(${hue}, 80%, 55%)`;
-            }
-        }
-    },
-
-    showToast(msg) {
-        const oldToast = document.querySelector('.game-toast');
-        if (oldToast) oldToast.remove();
-        const toast = document.createElement('div');
-        toast.className = 'game-toast';
-        toast.style.cssText = "position:fixed; bottom:80px; right:20px; background:rgba(0,0,0,0.9); color:#10b981; padding:12px 20px; border-radius:8px; border:1px solid #10b981; transform:translateX(150%); transition:0.5s; z-index:10000; font-weight:bold; box-shadow:0 0 10px rgba(0,0,0,0.5);";
-        toast.innerText = msg;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.style.transform = 'translateX(0)', 50);
-        setTimeout(() => {
-            toast.style.transform = 'translateX(150%)';
-            setTimeout(() => toast.remove(), 500);
-        }, 4000); 
-    }
-};
-window.addEventListener('load', () => GameEngine.init());
+        const progFill = document.getElementById('prog-
