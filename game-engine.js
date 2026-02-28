@@ -1,5 +1,5 @@
 /* ================================================================
-   【 ⚙️ GAME ENGINE - 試煉通關與超級閃爍版 】
+   【 ⚙️ GAME ENGINE - 六大試煉與超級閃爍版 】
    ================================================================ */
 const GameEngine = {
     state: {
@@ -9,7 +9,7 @@ const GameEngine = {
         status: '📦 檢整裝備中',
         achievements: [],
         weaponType: null,
-        currentTrial: 0 // 記錄目前通關到第幾試煉 (0~5)
+        currentTrial: 0 // 記錄目前通關到第幾試煉 (0~6)
     },
 
     ranks: [
@@ -22,13 +22,14 @@ const GameEngine = {
         { min: 0,   title: "🥚 報到新手村" }
     ],
 
-    // 五大試煉的資料庫 (進度、關卡、衣服升級、武器升級對照表)
+    // 六大試煉的資料庫 (進度、關卡、衣服升級、武器升級對照表)
     trialsData: {
-        1: { prog: 15,  loc: '📋 任務佈告欄', armor: '🥋 實習皮甲', wUpgrade: null },
-        2: { prog: 30,  loc: '🛡️ 裝備鑑定所', armor: '🦺 輕型鎖甲', wUpgrade: { '🗡️ 精鋼短劍':'⚔️ 騎士長劍', '🏹 獵人短弓':'🏹 精靈長弓', '🔱 鐵尖長槍':'🔱 鋼鐵戰矛'} },
-        3: { prog: 50,  loc: '🎒 出征準備營', armor: '🛡️ 鋼鐵重甲', wUpgrade: { '⚔️ 騎士長劍':'⚔️ 破甲重劍', '🏹 精靈長弓':'🏹 迅雷連弓', '🔱 鋼鐵戰矛':'🔱 破陣重矛'} },
-        4: { prog: 75,  loc: '💼 契約祭壇',   armor: '💠 秘銀胸甲', wUpgrade: { '⚔️ 破甲重劍':'🗡️ 聖光戰劍', '🏹 迅雷連弓':'🏹 追風神弓', '🔱 破陣重矛':'🔱 龍膽銀槍'} },
-        5: { prog: 100, loc: '👑 榮耀殿堂',   armor: '🌟 永恆守護鎧', wUpgrade: { '🗡️ 聖光戰劍':'👑 王者之聖劍', '🏹 追風神弓':'☄️ 破曉流星弓', '🔱 龍膽銀槍':'🐉 滅世龍吟槍'} }
+        1: { prog: 10,  loc: '👤 新手報到', armor: '🥋 實習皮甲', wUpgrade: null },
+        2: { prog: 25,  loc: '📁 裝備盤點', armor: '🦺 輕型鎖甲', wUpgrade: null }, // 第二區還不升武器
+        3: { prog: 40,  loc: '🛡️ 裝備鑑定所', armor: '🛡️ 鋼鐵重甲', wUpgrade: { '🗡️ 精鋼短劍':'⚔️ 騎士長劍', '🏹 獵人短弓':'🏹 精靈長弓', '🔱 鐵尖長槍':'🔱 鋼鐵戰矛'} },
+        4: { prog: 60,  loc: '🎒 出征準備營', armor: '💠 秘銀胸甲', wUpgrade: { '⚔️ 騎士長劍':'⚔️ 破甲重劍', '🏹 精靈長弓':'🏹 迅雷連弓', '🔱 鋼鐵戰矛':'🔱 破陣重矛'} },
+        5: { prog: 80,  loc: '💼 契約祭壇',   armor: '🛡️ 聖光戰鎧', wUpgrade: { '⚔️ 破甲重劍':'🗡️ 聖光戰劍', '🏹 迅雷連弓':'🏹 追風神弓', '🔱 破陣重矛':'🔱 龍膽銀槍'} },
+        6: { prog: 100, loc: '👑 榮耀殿堂',   armor: '🌟 永恆守護鎧', wUpgrade: { '🗡️ 聖光戰劍':'👑 王者之聖劍', '🏹 追風神弓':'☄️ 破曉流星弓', '🔱 龍膽銀槍':'🐉 滅世龍吟槍'} }
     },
 
     init() {
@@ -112,67 +113,66 @@ const GameEngine = {
         }
     },
 
-    // ⚔️ 全新功能：試煉通關指令
+    // ⚔️ 試煉通關指令
     completeTrial(event, trialNum) {
         if (this.state.currentTrial >= trialNum) {
-            alert("⚠️ 此試煉已經完成過了，勇者請繼續前進！");
+            alert("⚠️ 此階段任務已經完成了，請繼續前進！");
+            return;
+        }
+
+        // 防呆：必須照順序解鎖
+        if (trialNum > 1 && this.state.currentTrial < trialNum - 1) {
+            alert("⚠️ 請先完成前一個階段的任務！");
             return;
         }
 
         const tData = this.trialsData[trialNum];
         if (!tData) return;
 
-        // 記錄舊狀態
         const oldLoc = this.state.location;
         const oldItemsStr = this.state.items.join(' ');
         
-        // 1. 更新關卡與進度
         this.state.currentTrial = trialNum;
         this.state.location = tData.loc;
         
-        // 2. 更新防具 (找出目前的衣服並替換，加入最新的 🌟 永恆守護鎧)
-        const armorList = ['👕 粗製布衣', '🧥 強化布衫', '🥋 實習皮甲', '🦺 輕型鎖甲', '🛡️ 鋼鐵重甲', '💠 秘銀胸甲', '🌟 永恆守護鎧'];
+        // 更新防具清單 (加入了第5階的 🛡️ 聖光戰鎧)
+        const armorList = ['👕 粗製布衣', '🧥 強化布衫', '🥋 實習皮甲', '🦺 輕型鎖甲', '🛡️ 鋼鐵重甲', '💠 秘銀胸甲', '🛡️ 聖光戰鎧', '🌟 永恆守護鎧'];
         this.state.items = this.state.items.map(item => armorList.includes(item) ? tData.armor : item);
 
-        // 3. 更新武器 (如果有帶升級表，且玩家有武器)
+        // 更新武器 (第三階段才開始觸發)
         if (tData.wUpgrade && this.state.weaponType) {
             const upgradedWeapon = tData.wUpgrade[this.state.weaponType];
             if (upgradedWeapon) {
                 this.state.items = this.state.items.map(item => item === this.state.weaponType ? upgradedWeapon : item);
-                this.state.weaponType = upgradedWeapon; // 記憶新武器
+                this.state.weaponType = upgradedWeapon; 
             }
         }
 
         this.save();
         const newItemsStr = this.state.items.join(' ');
 
-        // 視覺特效：飄出提示
         if (event && event.clientX) {
             const floater = document.createElement('div');
             floater.className = 'floating-score';
-            floater.style.color = '#10b981'; // 綠色通關提示
-            floater.innerText = `✅ 試煉通過！`;
+            floater.style.color = '#10b981'; 
+            floater.innerText = `✓ 任務完成！`;
             floater.style.left = `${event.clientX - 20}px`;
             floater.style.top = `${event.clientY - 20}px`; 
             document.body.appendChild(floater);
             setTimeout(() => floater.remove(), 2000); 
         }
 
-        this.showToast(`✨ 恭喜通過試煉，關卡推進，裝備進化！`);
+        this.showToast(`✨ 恭喜完成任務，階段推進，裝備進化！`);
 
-        // 1秒延遲後觸發全體超級閃爍 (配合通知 4秒 + 1秒延遲 = 5秒)
         setTimeout(() => {
-            // 閃爍關卡名稱
             const locSpan = document.getElementById('dyn-loc');
             if (locSpan) this.triggerFlashAndUpdate(locSpan, this.state.location);
 
-            // 閃爍裝備清單
             const itemSpan = document.getElementById('dyn-items');
             if (itemSpan && oldItemsStr !== newItemsStr) {
                 this.triggerFlashAndUpdate(itemSpan, newItemsStr);
             }
 
-            // 閃爍攻略進度數值與進度條外框
             const progVal = document.getElementById('prog-val');
             const progFill = document.getElementById('prog-fill');
             if (progVal) this.triggerFlashAndUpdate(progVal, tData.prog + "%");
@@ -180,7 +180,7 @@ const GameEngine = {
                 progFill.style.width = tData.prog + "%";
                 const hue = (tData.prog / 100) * 120;
                 progFill.style.backgroundColor = `hsl(${hue}, 80%, 55%)`;
-                progFill.classList.add('bar-flash'); // 加入專屬進度條發光
+                progFill.classList.add('bar-flash'); 
                 setTimeout(() => progFill.classList.remove('bar-flash'), 1500);
             }
         }, 5000); 
@@ -213,7 +213,6 @@ const GameEngine = {
             scoreFill.style.backgroundColor = "#fbbf24";
         }
         
-        // 讀取當前進度 %
         if (isInit) {
             const currentProg = this.state.currentTrial > 0 ? this.trialsData[this.state.currentTrial].prog : 0;
             if (progVal) progVal.innerText = currentProg + "%";
@@ -230,7 +229,7 @@ const GameEngine = {
         if (oldToast) oldToast.remove();
         const toast = document.createElement('div');
         toast.className = 'game-toast';
-        toast.style.cssText = "position:fixed; bottom:80px; right:20px; background:rgba(0,0,0,0.9); color:#ffd700; padding:12px 20px; border-radius:8px; border:1px solid #ffd700; transform:translateX(150%); transition:0.5s; z-index:10000; font-weight:bold; box-shadow:0 0 10px rgba(0,0,0,0.5);";
+        toast.style.cssText = "position:fixed; bottom:80px; right:20px; background:rgba(0,0,0,0.9); color:#10b981; padding:12px 20px; border-radius:8px; border:1px solid #10b981; transform:translateX(150%); transition:0.5s; z-index:10000; font-weight:bold; box-shadow:0 0 10px rgba(0,0,0,0.5);";
         toast.innerText = msg;
         document.body.appendChild(toast);
         setTimeout(() => toast.style.transform = 'translateX(0)', 50);
