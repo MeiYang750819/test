@@ -1,5 +1,5 @@
 /* ================================================================
-   【 ⚙️ GAME ENGINE  】
+   【 ⚙️ GAME ENGINE - 獨立閃爍與延遲更新版 】
    ================================================================ */
 const GameEngine = {
     state: {
@@ -24,37 +24,40 @@ const GameEngine = {
     init() {
         const saved = localStorage.getItem('hero_progress');
         if (saved) { this.state = JSON.parse(saved); }
-        this.updateUI(true); // 初始載入強制更新全部文字
+        this.updateUI(true); // 初始載入強制更新全部文字，不觸發閃爍
     },
 
     save() { localStorage.setItem('hero_progress', JSON.stringify(this.state)); },
 
-    // 加入 event 參數來抓取滑鼠座標
     unlock(event, id, label, scoreGain, action = null) {
         if (this.state.achievements.includes(id)) {
             console.log(`[GameEngine] ${label} 已領取過，不再重覆跳轉。`);
             return;
         }
 
+        // 紀錄舊狀態以比對差異
         const oldRank = this.ranks.find(r => this.state.score >= r.min) || this.ranks[this.ranks.length - 1];
+        const oldScore = this.state.score;
+        const oldItemsStr = this.state.items.join(' ');
         
         this.state.achievements.push(id);
         this.state.score += scoreGain;
 
-        // 🌟 特效 1：滑鼠點擊處飄出金色的 +1 或 +2 (維持2秒)
+        // 🌟 特效 1：滑鼠點擊處飄出金色的 +1 或 +2
         if (event && event.clientX) {
             const floater = document.createElement('div');
             floater.className = 'floating-score';
             floater.innerText = `+${scoreGain}`;
             floater.style.left = `${event.clientX}px`;
-            floater.style.top = `${event.clientY - 20}px`; // 稍微偏上出現
+            floater.style.top = `${event.clientY - 20}px`; 
             document.body.appendChild(floater);
-            setTimeout(() => floater.remove(), 2000); // 2秒後移除DOM
+            setTimeout(() => floater.remove(), 2000); 
         }
 
         let toastMsg = "";
         let hasToast = false;
 
+        // 處理裝備邏輯
         if (action === 'random_weapon') {
             const weapons = ['🗡️ 精鋼短劍', '🏹 獵人短弓', '🔱 鐵尖長槍'];
             const w = weapons[Math.floor(Math.random() * weapons.length)];
@@ -70,73 +73,78 @@ const GameEngine = {
         
         this.save();
         
-        // 為了特效，我們先不馬上更新頂部戰力文字，先更新底下的進度與道具即可
-        this.updateUI(false); 
-
         const newRank = this.ranks.find(r => this.state.score >= r.min) || this.ranks[this.ranks.length - 1];
-        const isRankUp = oldRank.title !== newRank.title;
+        const newScore = this.state.score;
+        const newItemsStr = this.state.items.join(' ');
 
         // 判定通知與延遲時間
         if (scoreGain >= 2) {
             setTimeout(() => { alert(`🔔 發現隱藏關卡，冒險積分 +${scoreGain}`); }, 100);
-            hasToast = false; // 大摺疊不觸發右下角滑入通知
+            hasToast = false; 
         } else if (scoreGain === 1) {
             this.showToast(toastMsg);
             hasToast = true;
         }
 
-        // 🌟 特效 2 & 3：判斷是否有晉升，並計算閃爍延遲
-        if (isRankUp) {
-            // 如果有 Toast 就等 4 秒消失後再閃；如果沒有 Toast 就等 1 秒後閃
-            const delayTime = hasToast ? 4000 : 1000;
-            
-            setTimeout(() => {
-                const rankEl = document.getElementById('rank-text');
-                if (rankEl) {
-                    rankEl.classList.add('rank-flash'); // 加入閃爍動畫
-                    
-                    // 在閃爍最高潮 (大約 0.75 秒時) 切換文字
-                    setTimeout(() => {
-                        this.updateRankText(newRank);
-                    }, 750);
-
-                    // 動畫結束後移除 class，以便下次還能閃
-                    setTimeout(() => {
-                        rankEl.classList.remove('rank-flash');
-                    }, 1500);
+        // 🌟 特效 2 & 3：精準判斷誰變了，誰就閃爍並延遲更新
+        const delayTime = hasToast ? 4000 : 1000;
+        
+        setTimeout(() => {
+            // 處理戰力晉升閃爍
+            if (oldRank.title !== newRank.title) {
+                const rankSpan = document.getElementById('dyn-rank');
+                if (rankSpan) this.triggerFlashAndUpdate(rankSpan, newRank.title);
+            }
+            // 處理裝備變更閃爍
+            if (oldItemsStr !== newItemsStr) {
+                const itemSpan = document.getElementById('dyn-items');
+                if (itemSpan) this.triggerFlashAndUpdate(itemSpan, newItemsStr);
+            }
+            // 處理積分變更閃爍 (進度條維持原本邏輯)
+            if (oldScore !== newScore) {
+                const scoreSpan = document.getElementById('score-text');
+                if (scoreSpan) this.triggerFlashAndUpdate(scoreSpan, newScore + "分");
+                
+                // 進度條直接更新不閃爍
+                const scoreFill = document.getElementById('score-fill');
+                if (scoreFill) {
+                    const displayScore = Math.min(newScore, 100);
+                    scoreFill.style.width = displayScore + "%";
+                    scoreFill.style.backgroundColor = "#fbbf24";
                 }
-            }, delayTime);
-        } else {
-            // 如果沒升級，直接默默把字體換掉即可 (萬一分數變了但稱號沒變)
-            this.updateRankText(newRank);
-        }
+            }
+        }, delayTime);
     },
 
-    updateUI(forceUpdateRankText = false) {
+    // 負責觸發單一元素的閃爍與文字切換
+    triggerFlashAndUpdate(element, newText) {
+        element.classList.add('rank-flash'); // 加入閃爍 CSS
+        // 在閃爍最高潮 (大約 0.75 秒時) 切換文字
+        setTimeout(() => { element.innerText = newText; }, 750);
+        // 動畫結束後移除 class，以便下次還能閃
+        setTimeout(() => { element.classList.remove('rank-flash'); }, 1500);
+    },
+
+    // 初始化與強制更新時使用 (把整行拆開，只更新動態值)
+    updateUI(isInit = false) {
         const rank = this.ranks.find(r => this.state.score >= r.min) || this.ranks[this.ranks.length - 1];
+        const rankEl = document.getElementById('rank-text');
         const statusTagEl = document.getElementById('status-tag');
         const scoreEl = document.getElementById('score-text');
         const scoreFill = document.getElementById('score-fill');
 
-        if (forceUpdateRankText) {
-            this.updateRankText(rank);
+        // 為了讓 JavaScript 能精準找到要閃爍的字，我們在 HTML 中包上 ID
+        if (rankEl && isInit) {
+            rankEl.innerHTML = `<span style="color:#fbbf24;">戰力：</span><span id="dyn-rank" style="color:#FFFFFF;">${rank.title}</span>　｜　<span style="color:#fbbf24;">關卡：</span><span id="dyn-loc" style="color:#FFFFFF;">${this.state.location}</span>`;
         }
-
-        if (statusTagEl) {
-            statusTagEl.innerHTML = `<span style="color:#8ab4f8;">道具：</span><span style="color:#FFFFFF;">${this.state.items.join(' ')}</span>　｜　<span style="color:#8ab4f8;">狀態：</span><span style="color:#FFFFFF;">${this.state.status}</span>`;
+        if (statusTagEl && isInit) {
+            statusTagEl.innerHTML = `<span style="color:#8ab4f8;">道具：</span><span id="dyn-items" style="color:#FFFFFF;">${this.state.items.join(' ')}</span>　｜　<span style="color:#8ab4f8;">狀態：</span><span id="dyn-status" style="color:#FFFFFF;">${this.state.status}</span>`;
         }
-        if (scoreEl) scoreEl.innerText = this.state.score + "分";
-        if (scoreFill) {
+        if (scoreEl && isInit) scoreEl.innerText = this.state.score + "分";
+        if (scoreFill && isInit) {
             const displayScore = Math.min(this.state.score, 100);
             scoreFill.style.width = displayScore + "%";
             scoreFill.style.backgroundColor = "#fbbf24";
-        }
-    },
-
-    updateRankText(rankObj) {
-        const rankEl = document.getElementById('rank-text');
-        if (rankEl) {
-            rankEl.innerHTML = `<span style="color:#fbbf24;">戰力：</span><span style="color:#FFFFFF;">${rankObj.title}</span>　｜　<span style="color:#fbbf24;">關卡：</span><span style="color:#FFFFFF;">${this.state.location}</span>`;
         }
     },
 
