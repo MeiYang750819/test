@@ -28,7 +28,7 @@ const GameEngine = {
         2: { prog: 30,  loc: '🛡️ 裝備鑑定所', armor: '🦺 輕型鎖甲', wUpgrade: { '🗡️ 精鋼短劍':'⚔️ 騎士長劍', '🏹 獵人短弓':'🏹 精靈長弓', '🔱 鐵尖長槍':'🔱 鋼鐵戰矛'} },
         3: { prog: 50,  loc: '🎒 出征準備營', armor: '🛡️ 鋼鐵重甲', wUpgrade: { '⚔️ 騎士長劍':'⚔️ 破甲重劍', '🏹 精靈長弓':'🏹 迅雷連弓', '🔱 鋼鐵戰矛':'🔱 破陣重矛'} },
         4: { prog: 75,  loc: '💼 契約祭壇',   armor: '💠 秘銀胸甲', wUpgrade: { '⚔️ 破甲重劍':'🗡️ 聖光戰劍', '🏹 迅雷連弓':'🏹 追風神弓', '🔱 破陣重矛':'🔱 龍膽銀槍'} },
-        5: { prog: 100, loc: '👑 榮耀殿堂',   armor: '🌟 輝鎧·永恆守護', wUpgrade: { '🗡️ 聖光戰劍':'👑 王者之聖劍', '🏹 追風神弓':'☄️ 破曉流星弓', '🔱 龍膽銀槍':'🐉 滅世龍吟槍'} }
+        5: { prog: 100, loc: '👑 榮耀殿堂',   armor: '🌟 永恆守護鎧', wUpgrade: { '🗡️ 聖光戰劍':'👑 王者之聖劍', '🏹 追風神弓':'☄️ 破曉流星弓', '🔱 龍膽銀槍':'🐉 滅世龍吟槍'} }
     },
 
     init() {
@@ -130,7 +130,7 @@ const GameEngine = {
         this.state.currentTrial = trialNum;
         this.state.location = tData.loc;
         
-        // 2. 更新防具 (找出目前的衣服並替換)
+        // 2. 更新防具 (找出目前的衣服並替換，加入最新的 🌟 永恆守護鎧)
         const armorList = ['👕 粗製布衣', '🧥 強化布衫', '🥋 實習皮甲', '🦺 輕型鎖甲', '🛡️ 鋼鐵重甲', '💠 秘銀胸甲', '🌟 永恆守護鎧'];
         this.state.items = this.state.items.map(item => armorList.includes(item) ? tData.armor : item);
 
@@ -160,7 +160,7 @@ const GameEngine = {
 
         this.showToast(`✨ 恭喜通過試煉，關卡推進，裝備進化！`);
 
-        // 1秒延遲後觸發全體超級閃爍
+        // 1秒延遲後觸發全體超級閃爍 (配合通知 4秒 + 1秒延遲 = 5秒)
         setTimeout(() => {
             // 閃爍關卡名稱
             const locSpan = document.getElementById('dyn-loc');
@@ -183,7 +183,7 @@ const GameEngine = {
                 progFill.classList.add('bar-flash'); // 加入專屬進度條發光
                 setTimeout(() => progFill.classList.remove('bar-flash'), 1500);
             }
-        }, 5000); // 配合通知 4秒 + 1秒延遲 = 5秒
+        }, 5000); 
     },
 
     triggerFlashAndUpdate(element, newText) {
