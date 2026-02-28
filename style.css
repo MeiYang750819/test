@@ -121,15 +121,18 @@ body {
   vertical-align: middle; /* 與文字垂直置中對齊 */
   margin-left: 8px;
 }
-.progress-fill { background: #10b981; height: 100%; transition: width 0.5s ease, background-color 0.5s ease; } /* 綠色填滿區段與動畫(新增背景色漸變動畫) */
+.progress-fill { background: #10b981; height: 100%; transition: width 0.5s ease, background-color 0.5s ease; } /* 綠色填滿區段與動畫 */
 
 /* 🎨 顏色連動邏輯 (確保漸層背景正常顯示) */
-/* 使用 background: var(...) 而不是 background-color: ，因為線性漸層是圖片屬性 */
 body.page-1 { background: var(--p1-bgColor); background-attachment: fixed; color: var(--p1-textColor); }
 body.page-1 .sticky-bar { background: var(--p1-headerColor); color: var(--p1-titleColor); }
 
 body.page-2 { background: var(--p2-bgColor); background-attachment: fixed; color: var(--p2-textColor); }
 body.page-2 .sticky-bar { background: var(--p2-headerColor); color: var(--p2-titleColor); }
+
+/* ✨ 這裡補上第三頁的背景設定，解決反白問題 ✨ */
+body.page-3 { background: var(--p3-bgColor); background-attachment: fixed; color: var(--p3-textColor); }
+body.page-3 .sticky-bar { background: var(--p3-headerColor); color: var(--p3-titleColor); }
 
 /* 內容區與摺疊選單外部容器 */
 .tab-content { 
@@ -228,23 +231,19 @@ details details { box-shadow: none; margin-bottom: 0; border-radius: 0; border: 
   margin-top: auto; /* 若圖片高度不一，將文字強制推向最底端對齊 */
 }
 
-/* 版權宣告 Footer (含上方分隔線) */
+/* 版權宣告 Footer (已縮小間距版) */
 .footer { 
   text-align: center; 
-  padding: 20px 20px; /* 這裡原本是 40px，改成 20px 讓整個 Footer 往上移，離上面內容近一點 */
+  padding: 20px 20px; 
   font-size: var(--footer-fontSize); 
   color: var(--footer-textColor); 
   line-height: 1.5; 
   border-top: 1px solid rgba(255,255,255,0.1); 
   margin-top: 20px; 
 }
-.footer-logo { 
-  display: block; 
-  margin: 0 auto 2px; /* 這裡原本下面是 10px，改成 2px 讓商標跟底下的 v1.0.0 文字靠得非常近 */
-  max-width: 100px; 
-}
+.footer-logo { display: block; margin: 0 auto 2px; max-width: 100px; } 
 
-/* 更細緻的文字顏色設定 (供評核標準使用) */
+/* 更細緻的文字顏色設定 */
 .text-green { color: #10b981; font-weight: bold; }
 .text-red { color: #ef4444; font-weight: bold; }
 .text-lightred { color: #ff8a8a; font-weight: bold; } /* 淺紅 */
