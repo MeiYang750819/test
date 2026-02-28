@@ -1,5 +1,5 @@
 /* ================================================================
-   【 ⚙️ GAME ENGINE - 獨立閃爍與延遲更新版 】
+   【 ⚙️ GAME ENGINE - 獨立閃爍與精準時間軸版 】
    ================================================================ */
 const GameEngine = {
     state: {
@@ -43,7 +43,7 @@ const GameEngine = {
         this.state.achievements.push(id);
         this.state.score += scoreGain;
 
-        // 🌟 特效 1：滑鼠點擊處飄出金色的 +1 或 +2
+        // 🌟 特效 1：滑鼠點擊處立刻飄出金色的 +1 或 +2
         if (event && event.clientX) {
             const floater = document.createElement('div');
             floater.className = 'floating-score';
@@ -55,7 +55,6 @@ const GameEngine = {
         }
 
         let toastMsg = "";
-        let hasToast = false;
 
         // 處理裝備邏輯
         if (action === 'random_weapon') {
@@ -77,19 +76,8 @@ const GameEngine = {
         const newScore = this.state.score;
         const newItemsStr = this.state.items.join(' ');
 
-        // 判定通知與延遲時間
-        if (scoreGain >= 2) {
-            setTimeout(() => { alert(`🔔 發現隱藏關卡，冒險積分 +${scoreGain}`); }, 100);
-            hasToast = false; 
-        } else if (scoreGain === 1) {
-            this.showToast(toastMsg);
-            hasToast = true;
-        }
-
-        // 🌟 特效 2 & 3：精準判斷誰變了，誰就閃爍並延遲更新
-        const delayTime = hasToast ? 4000 : 1000;
-        
-        setTimeout(() => {
+        // 閃爍更新邏輯包裝成函式，方便統一延遲呼叫
+        const executeFlashUpdates = () => {
             // 處理戰力晉升閃爍
             if (oldRank.title !== newRank.title) {
                 const rankSpan = document.getElementById('dyn-rank');
@@ -113,7 +101,26 @@ const GameEngine = {
                     scoreFill.style.backgroundColor = "#fbbf24";
                 }
             }
-        }, delayTime);
+        };
+
+        // 🌟 特效 2 & 3：精準時間軸判定
+        if (scoreGain >= 2) {
+            // 為了讓點擊飄數字能先渲染，稍微延遲 100 毫秒再跳出阻斷畫面的 alert
+            setTimeout(() => { 
+                alert(`🔔 發現隱藏關卡，冒險積分 +${scoreGain}`); 
+                // 當玩家按下「確定」關閉視窗後，等待 1.5 秒執行上方閃爍
+                setTimeout(() => {
+                    executeFlashUpdates();
+                }, 1500);
+            }, 100);
+        } else if (scoreGain === 1) {
+            // 觸發右下角 4 秒通知
+            this.showToast(toastMsg);
+            // 等待通知的 4 秒 + 您要求的 1.5 秒 = 總共 5.5 秒後執行上方閃爍
+            setTimeout(() => {
+                executeFlashUpdates();
+            }, 5500);
+        }
     },
 
     // 負責觸發單一元素的閃爍與文字切換
