@@ -32,7 +32,7 @@
     <nav class="nav-tabs" style="top: 180px;">
         <a href="index.html" class="tab-btn active">📜 冒險指南</a>
         <a href="page2.html" class="tab-btn">🏹 鍛造秘笈</a>
-        <a href="#" class="tab-btn">⚔️ 勇者試煉</a>
+        <a href="page3.html" class="tab-btn">⚔️ 勇者試煉</a>
     </nav>
 
     <main class="tab-content active">
@@ -126,20 +126,12 @@
     </footer>
 
     <script>
-        const fetchedData = { companyName: "FIZZ FIZZ.TAIPEI", team: "外場團隊", type: "兼職", userName: "測試員", currentProg: 0 };
+        const fetchedData = { companyName: "FIZZ FIZZ.TAIPEI", team: "外場團隊", type: "兼職", userName: "測試員" };
         function applyData(data) {
             document.querySelectorAll('.dyn-company').forEach(el => el.innerText = data.companyName);
             document.querySelectorAll('.dyn-team').forEach(el => el.innerText = data.team);
             document.querySelectorAll('.dyn-type').forEach(el => el.innerText = data.type);
             document.querySelectorAll('.dyn-name').forEach(el => el.innerText = data.userName);
-            const pVal = document.getElementById('prog-val');
-            const pFill = document.getElementById('prog-fill');
-            if(pVal && pFill) {
-                pVal.innerText = data.currentProg + "%";
-                pFill.style.width = data.currentProg + "%";
-                const hue = (data.currentProg / 100) * 120;
-                pFill.style.backgroundColor = `hsl(${hue}, 80%, 55%)`;
-            }
         }
         window.addEventListener('load', () => applyData(fetchedData));
     </script>
