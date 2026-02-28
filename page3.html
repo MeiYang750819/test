@@ -7,6 +7,51 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="nav.css">
     <script src="game-engine.js"></script>
+    <style>
+        /* 針對第三分頁專屬的排版微調 */
+        .details-body {
+            text-align: left; /* 確保內文全部靠左 */
+            line-height: 1.8;
+        }
+        .action-center {
+            text-align: center; /* 讓按鈕置中 */
+            margin-top: 15px;
+        }
+        /* 新版科技風按鈕：暗色底 + 螢光綠框 */
+        .btn-confirm {
+            width: 100%;
+            padding: 12px;
+            background: #2d3748;
+            color: #4ade80;
+            font-weight: bold;
+            font-size: 15px;
+            border: 1px solid #4ade80;
+            border-radius: 6px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        .btn-confirm:hover {
+            background: #4ade80;
+            color: #000;
+        }
+        /* 自訂核取方塊排版 */
+        .check-item {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .check-input-text {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #8ab4f8;
+            color: #fff;
+            width: 150px;
+            margin-left: 5px;
+            outline: none;
+            font-family: inherit;
+        }
+    </style>
 </head>
 <body class="page-3">
 
@@ -38,20 +83,44 @@
     <main class="tab-content active">
         
         <details>
-            <summary class="main-summary">【新手報到】盤點期</summary>
+            <summary class="main-summary">【新手報到】冒險指南</summary>
             <div class="details-body">
-                ■ 任務目標：請確認您已閱讀所有入職規範，並打勾確認。
-                <br><br>
-                <button onclick="GameEngine.completeTrial(event, 1)" style="width:100%; padding:10px; background:#fbbf24; color:#000; font-weight:bold; border:none; border-radius:5px; cursor:pointer;">✅ 確認完成新手報到</button>
+                ■ 任務目標：請確認您已詳閱入職規範。<br>
+                <label class="check-item"><input type="checkbox"> 我已閱讀「📜 冒險指南」</label>
+                <label class="check-item"><input type="checkbox"> 我已閱讀「🏹 鍛造秘笈」</label>
+                
+                <div class="action-center">
+                    <button class="btn-confirm" onclick="GameEngine.completeTrial(event, 1)">✓ 確認完成新手報到</button>
+                </div>
+            </div>
+        </details>
+
+        <details>
+            <summary class="main-summary">【文件盤點】入職四大文件</summary>
+            <div class="details-body">
+                ■ 任務目標：請確認是否具備以下四大文件。<br>
+                <span style="color:#8ab4f8; font-size:13px;">(若無對應證照亦可直接打勾確認)</span><br><br>
+                
+                <label class="check-item"><input type="checkbox"> 台新國際商業銀行-實體存摺</label>
+                <label class="check-item"><input type="checkbox"> 中餐證照</label>
+                <label class="check-item"><input type="checkbox"> 西餐證照</label>
+                <label class="check-item"><input type="checkbox"> 其他：<input type="text" class="check-input-text"></label>
+                
+                <div class="action-center">
+                    <button class="btn-confirm" onclick="GameEngine.completeTrial(event, 2)">✓ 確認完成文件盤點</button>
+                </div>
             </div>
         </details>
 
         <details>
             <summary class="main-summary">【裝備強化】準備期</summary>
             <div class="details-body">
-                ■ 任務目標：請上傳您的五大必備文件，進入裝備鑑定所。
-                <br><br>
-                <button onclick="GameEngine.completeTrial(event, 2)" style="width:100%; padding:10px; background:#fbbf24; color:#000; font-weight:bold; border:none; border-radius:5px; cursor:pointer;">✅ 確認完成裝備強化</button>
+                ■ 任務目標：請上傳您的五大必備文件，進入裝備鑑定所。<br>
+                (此區未來將連動後台審核機制)
+                
+                <div class="action-center">
+                    <button class="btn-confirm" onclick="GameEngine.completeTrial(event, 3)">✓ 確認完成裝備強化</button>
+                </div>
             </div>
         </details>
 
@@ -59,8 +128,10 @@
             <summary class="main-summary">【戰前整備】複習期</summary>
             <div class="details-body">
                 ■ 任務目標：再次確認實體報到時間與地點，準備出征！
-                <br><br>
-                <button onclick="GameEngine.completeTrial(event, 3)" style="width:100%; padding:10px; background:#fbbf24; color:#000; font-weight:bold; border:none; border-radius:5px; cursor:pointer;">✅ 確認完成戰前整備</button>
+                
+                <div class="action-center">
+                    <button class="btn-confirm" onclick="GameEngine.completeTrial(event, 4)">✓ 確認完成戰前整備</button>
+                </div>
             </div>
         </details>
 
@@ -68,8 +139,10 @@
             <summary class="main-summary">【最終考驗】報到日</summary>
             <div class="details-body">
                 ■ 任務目標：報到當日，線上簽署正式僱傭契約。
-                <br><br>
-                <button onclick="GameEngine.completeTrial(event, 4)" style="width:100%; padding:10px; background:#fbbf24; color:#000; font-weight:bold; border:none; border-radius:5px; cursor:pointer;">✅ 確認完成最終考驗</button>
+                
+                <div class="action-center">
+                    <button class="btn-confirm" onclick="GameEngine.completeTrial(event, 5)">✓ 確認完成最終考驗</button>
+                </div>
             </div>
         </details>
 
@@ -77,8 +150,10 @@
             <summary class="main-summary">【完成試煉】決斷區</summary>
             <div class="details-body">
                 ■ 任務目標：主管與人資最終決斷放行，踏入榮耀殿堂！
-                <br><br>
-                <button onclick="GameEngine.completeTrial(event, 5)" style="width:100%; padding:10px; background:#fbbf24; color:#000; font-weight:bold; border:none; border-radius:5px; cursor:pointer;">👑 迎接最終榮耀 (完成試煉)</button>
+                
+                <div class="action-center">
+                    <button class="btn-confirm" style="color:#fbbf24; border-color:#fbbf24;" onclick="GameEngine.completeTrial(event, 6)">👑 迎接最終榮耀 (完成試煉)</button>
+                </div>
             </div>
         </details>
 
