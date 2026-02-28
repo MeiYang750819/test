@@ -9,7 +9,7 @@
     <meta property="og:description" content="闖關冒險即將開始！詳閱任務指南並完成關卡，解鎖職場新身分！" />
     <meta property="og:image" content="https://mys0819.github.io/MYs/assets/img1/MYs_logo_去背1.png" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://mys0819.github.io/OCS/" />
+    <meta property="og:url" content="https://mys0819.github.io/test/" />
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="nav.css">
@@ -46,7 +46,7 @@
     <nav class="nav-tabs" style="top: 180px;">
         <a href="index.html" class="tab-btn">📜 冒險指南</a>
         <a href="page2.html" class="tab-btn active">🏹 鍛造秘笈</a>
-        <a href="#" class="tab-btn">⚔️ 勇者試煉</a>
+        <a href="page3.html" class="tab-btn">⚔️ 勇者試煉</a>
     </nav>
 
     <main class="tab-content active">
@@ -149,8 +149,7 @@
             companyName: "FIZZ FIZZ.TAIPEI", 
             team: "外場團隊",
             type: "兼職",
-            userName: "測試員",
-            currentProg: 0      
+            userName: "測試員"
         };
 
         function applyData(data) {
@@ -158,14 +157,6 @@
             document.querySelectorAll('.dyn-team').forEach(el => el.innerText = data.team);
             document.querySelectorAll('.dyn-type').forEach(el => el.innerText = data.type);
             document.querySelectorAll('.dyn-name').forEach(el => el.innerText = data.userName);
-            const pVal = document.getElementById('prog-val');
-            const pFill = document.getElementById('prog-fill');
-            if(pVal && pFill) {
-                pVal.innerText = data.currentProg + "%";
-                pFill.style.width = data.currentProg + "%";
-                const hue = (data.currentProg / 100) * 120;
-                pFill.style.backgroundColor = `hsl(${hue}, 80%, 55%)`;
-            }
         }
 
         function zoomImg(el) {
