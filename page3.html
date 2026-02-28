@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💼 勇者入職試煉</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="nav.css">
+    <script src="game-engine.js"></script>
+</head>
+<body class="page-3">
+
+    <div class="sticky-bar" id="block-identity">
+        <span class="dyn-company">載入中...</span>　｜　<span class="dyn-team">載入中...</span>　｜　<span class="dyn-type">載入中...</span>　｜　<span class="dyn-name">載入中...</span>
+    </div>
+
+    <div class="sticky-bar" id="block-status-1" style="top: 45px;">
+        <span id="rank-text">載入中...</span>
+    </div>
+
+    <div class="sticky-bar" id="block-status-2" style="top: 90px;">
+        <span id="status-tag">載入中...</span>
+    </div>
+
+    <div class="sticky-bar" id="block-status-3" style="top: 135px;">
+        <span id="score-label" style="color:#ff8a8a;">🏆 冒險積分：</span><span id="score-text">0分</span>
+        <div class="progress-track"><div class="progress-fill" id="score-fill" style="width: 0%;"></div></div>
+        　｜　<span id="prog-label" style="color:#ff8a8a;">⚔️ 攻略進度：</span><span id="prog-val">0%</span>
+        <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width: 0%;"></div></div>
+    </div>
+
+    <nav class="nav-tabs" style="top: 180px;">
+        <a href="index.html" class="tab-btn">📜 冒險指南</a>
+        <a href="page2.html" class="tab-btn">🏹 鍛造秘笈</a>
+        <a href="#" class="tab-btn active">⚔️ 勇者試煉</a>
+    </nav>
+
+    <main class="tab-content active">
+        
+        <details>
+            <summary class="main-summary">【試煉一】盤點期</summary>
+            <div class="details-body">
+                ■ 任務目標：請確認您已閱讀所有入職規範，並打勾確認。
+                <br><br>
+                <button onclick="GameEngine.completeTrial(event, 1)" style="width:100%; padding:10px; background:#fbbf24; color:#000; font-weight:bold; border:none; border-radius:5px; cursor:pointer;">✅ 確認完成試煉一</button>
+            </div>
+        </details>
+
+        <details>
+            <summary class="main-summary">【試煉二】準備期</summary>
+            <div class="details-body">
+                ■ 任務目標：請上傳您的五大必備文件，進入裝備鑑定所。
+                <br><br>
+                <button onclick="GameEngine.completeTrial(event, 2)" style="width:100%; padding:10px; background:#fbbf24; color:#000; font-weight:bold; border:none; border-radius:5px; cursor:pointer;">✅ 確認完成試煉二</button>
+            </div>
+        </details>
+
+        <details>
+            <summary class="main-summary">【試煉三】複習期</summary>
+            <div class="details-body">
+                ■ 任務目標：再次確認實體報到時間與地點，準備出征！
+                <br><br>
+                <button onclick="GameEngine.completeTrial(event, 3)" style="width:100%; padding:10px; background:#fbbf24; color:#000; font-weight:bold; border:none; border-radius:5px; cursor:pointer;">✅ 確認完成試煉三</button>
+            </div>
+        </details>
+
+        <details>
+            <summary class="main-summary">【試煉四】報到日</summary>
+            <div class="details-body">
+                ■ 任務目標：報到當日，線上簽署正式僱傭契約。
+                <br><br>
+                <button onclick="GameEngine.completeTrial(event, 4)" style="width:100%; padding:10px; background:#fbbf24; color:#000; font-weight:bold; border:none; border-radius:5px; cursor:pointer;">✅ 確認完成試煉四</button>
+            </div>
+        </details>
+
+        <details>
+            <summary class="main-summary">【試煉五】決斷區</summary>
+            <div class="details-body">
+                ■ 任務目標：主管與人資最終決斷放行，踏入榮耀殿堂！
+                <br><br>
+                <button onclick="GameEngine.completeTrial(event, 5)" style="width:100%; padding:10px; background:#fbbf24; color:#000; font-weight:bold; border:none; border-radius:5px; cursor:pointer;">👑 迎接最終榮耀 (完成試煉)</button>
+            </div>
+        </details>
+
+    </main>
+
+    <footer class="footer">
+        <img src="assets/MYs_logo_去背.png" alt="MYs Logo" class="footer-logo">
+        © Copyright 2026 MYs System-b1.0.0-02-22-2026-115
+    </footer>
+
+    <script>
+        const fetchedData = { companyName: "FIZZ FIZZ.TAIPEI", team: "外場團隊", type: "兼職", userName: "測試員" };
+        function applyData(data) {
+            document.querySelectorAll('.dyn-company').forEach(el => el.innerText = data.companyName);
+            document.querySelectorAll('.dyn-team').forEach(el => el.innerText = data.team);
+            document.querySelectorAll('.dyn-type').forEach(el => el.innerText = data.type);
+            document.querySelectorAll('.dyn-name').forEach(el => el.innerText = data.userName);
+        }
+        window.addEventListener('load', () => applyData(fetchedData));
+    </script>
+</body>
+</html>
