@@ -56,9 +56,9 @@
         </details>
 
         <details>
-            <summary class="main-summary" onclick="GameEngine.unlock('idx-m-1', '入職報到說明', 2)">🏛️ 入職報到說明</summary>
+            <summary class="main-summary" onclick="GameEngine.unlock(event, 'idx-m-1', '入職報到說明', 2)">🏛️ 入職報到說明</summary>
             <details>
-                <summary class="sub-summary" onclick="event.stopPropagation(); GameEngine.unlock('idx-s-1', '五大文件', 1, 'random_weapon')">【入職報到五大文件】</summary>
+                <summary class="sub-summary" onclick="event.stopPropagation(); GameEngine.unlock(event, 'idx-s-1', '五大文件', 1, 'random_weapon')">【入職報到五大文件】</summary>
                 <div class="details-body">■ 報到前必須準備五大文件,當日要繳交:
     - 經認證醫療機構-勞工體格檢查報告.
     - 經認證醫療機構-食品從業人員體檢報告.
@@ -69,7 +69,7 @@
 ■ 主動並積極回報處理狀況.</div>
             </details>
             <details>
-                <summary class="sub-summary" onclick="event.stopPropagation(); GameEngine.unlock('idx-s-2', '用途說明', 1, 'upgrade_armor')">【報到文件用途說明】</summary>
+                <summary class="sub-summary" onclick="event.stopPropagation(); GameEngine.unlock(event, 'idx-s-2', '用途說明', 1, 'upgrade_armor')">【報到文件用途說明】</summary>
                 <div class="details-body">1. 一般勞工體格檢查報告:
 ❗️依據《職業安全衛生法》§20
 勞工健康保護規則§16~17
