@@ -24,7 +24,7 @@ const GameEngine = {
 
     // 六大試煉的資料庫 (進度、關卡、衣服升級、武器升級對照表)
     trialsData: {
-        1: { prog: 10,  loc: '👤 新手報到', armor: '🥋 實習皮甲', wUpgrade: null },
+        1: { prog: 10,  loc: '🏰 登錄公會', armor: '🥋 實習皮甲', wUpgrade: null },
         2: { prog: 25,  loc: '📁 裝備盤點', armor: '🦺 輕型鎖甲', wUpgrade: null }, // 第二區還不升武器
         3: { prog: 40,  loc: '🛡️ 裝備鑑定所', armor: '🛡️ 鋼鐵重甲', wUpgrade: { '🗡️ 精鋼短劍':'⚔️ 騎士長劍', '🏹 獵人短弓':'🏹 精靈長弓', '🔱 鐵尖長槍':'🔱 鋼鐵戰矛'} },
         4: { prog: 60,  loc: '🎒 出征準備營', armor: '💠 秘銀胸甲', wUpgrade: { '⚔️ 騎士長劍':'⚔️ 破甲重劍', '🏹 精靈長弓':'🏹 迅雷連弓', '🔱 鋼鐵戰矛':'🔱 破陣重矛'} },
