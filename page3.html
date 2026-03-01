@@ -11,27 +11,28 @@
         /* 針對第三分頁專屬的緊湊排版微調 */
         .details-body {
             text-align: left;
-            line-height: 1.5; /* 縮小整體行距 */
-            padding-top: 10px; /* 稍微縮小內部頂端空間 */
+            line-height: 1.2; /* 極致縮小整體行距 */
+            padding-top: 8px; /* 縮小內部頂端空間 */
+            padding-bottom: 12px;
         }
         .task-target {
             color: #efefef;
             font-weight: bold;
-            margin-bottom: 12px; /* 標題跟選項的距離 */
+            margin-bottom: 8px; /* 標題跟選項的距離縮小 */
             display: block;
         }
-        /* 選項與打勾框的精準對齊 */
+        /* 選項與打勾框的精準緊密對齊 */
         .check-item {
             display: flex;
             align-items: center;
-            margin-bottom: 8px; /* 縮小每個選項的間距 */
+            margin-bottom: 4px; /* 極致縮小每個選項的間距 */
             cursor: pointer;
             font-size: 14px;
         }
         .check-item input[type="checkbox"] {
-            margin-right: 8px; /* 打勾框跟文字的距離 */
-            width: 16px;
-            height: 16px;
+            margin-right: 6px; /* 打勾框跟文字的距離縮小 */
+            width: 15px;
+            height: 15px;
             flex-shrink: 0; /* 防止框框被擠壓變形 */
         }
         .check-input-text {
@@ -46,12 +47,12 @@
         }
         .action-center {
             text-align: center;
-            margin-top: 15px; /* 按鈕跟上方選項的距離 */
+            margin-top: 10px; /* 按鈕跟上方選項的距離縮小 */
         }
         /* 科技風按鈕：暗色底 + 螢光綠框 */
         .btn-confirm {
             width: 100%;
-            padding: 10px; /* 按鈕本身稍微壓扁一點 */
+            padding: 10px; 
             background: #2d3748;
             color: #4ade80;
             font-weight: bold;
@@ -102,12 +103,12 @@
             <div class="details-body">
                 <span class="task-target">📣 任務目標：確認已詳閱入職規範.</span>
                 
-                <label class="check-item"><input type="checkbox"> 我已閱讀「📜 冒險指南」</label>
-                <label class="check-item"><input type="checkbox"> 我已閱讀「🏹 鍛造秘笈」</label>
-                <label class="check-item" style="color: #ff8a8a;">⚠️ 若被退件「 本人承擔」</label>
+                <label class="check-item"><input type="checkbox" id="chk-guide"> 我已閱讀「📜 冒險指南」</label>
+                <label class="check-item"><input type="checkbox" id="chk-forge"> 我已閱讀「🏹 鍛造秘笈」</label>
+                <label class="check-item"><input type="checkbox" id="chk-risk"> ⚠️ 若被退件「 本人承擔」</label>
                 
                 <div class="action-center">
-                    <button class="btn-confirm" onclick="GameEngine.completeTrial(event, 1)">✓ 確認完成新手報到</button>
+                    <button class="btn-confirm" onclick="checkAndCompleteTrial1(event)">✓ 確認完成新手報到</button>
                 </div>
             </div>
         </details>
@@ -115,7 +116,7 @@
         <details>
             <summary class="main-summary">【裝備盤點】行囊區</summary>
             <div class="details-body">
-                <span class="task-target">📣 任務目標：是否以下四大文件,若無直接按確認即可.</span>
+                <span class="task-target">📣 任務目標：是否具備以下四大文件，若無直接按確認即可.</span>
                 
                 <label class="check-item"><input type="checkbox"> 台新國際商業銀行-實體存摺</label>
                 <label class="check-item"><input type="checkbox"> 中餐證照</label>
@@ -132,7 +133,7 @@
             <summary class="main-summary">【裝備強化】準備期</summary>
             <div class="details-body">
                 <span class="task-target">📣 任務目標：請上傳您的五大必備文件，進入裝備鑑定所。</span>
-                (此區未來將連動後台審核機制)
+                <span style="font-size: 13px; color: #b7b7b7;">(此區未來將連動後台審核機制)</span>
                 
                 <div class="action-center">
                     <button class="btn-confirm" onclick="GameEngine.completeTrial(event, 3)">✓ 確認完成裝備強化</button>
@@ -189,6 +190,20 @@
             document.querySelectorAll('.dyn-name').forEach(el => el.innerText = data.userName);
         }
         window.addEventListener('load', () => applyData(fetchedData));
+
+        // 第一關專屬打勾防呆檢查
+        function checkAndCompleteTrial1(event) {
+            const chk1 = document.getElementById('chk-guide').checked;
+            const chk2 = document.getElementById('chk-forge').checked;
+            const chk3 = document.getElementById('chk-risk').checked;
+
+            if (!chk1 || !chk2 || !chk3) {
+                alert("⚠️ 勇者請注意：必須勾選所有確認項目，才能推進階段！");
+                return;
+            }
+            // 都有打勾才呼叫引擎通關
+            GameEngine.completeTrial(event, 1);
+        }
     </script>
 </body>
 </html>
