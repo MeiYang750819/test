@@ -1,5 +1,5 @@
 /* ================================================================
-   【 ⚙️ GAME ENGINE - 九階雷達與動態進度版 】
+   【 ⚙️ GAME ENGINE - 九階雷達與真實因果防跳級版 】
    ================================================================ */
 const GameEngine = {
     state: {
@@ -9,9 +9,10 @@ const GameEngine = {
         status: '📦 檢整裝備中',
         achievements: [],
         weaponType: null,
-        currentTrial: 0 // 記錄目前通關到第幾試煉 (0~6)
+        currentTrial: 0 
     },
 
+    // 九階殘酷雷達
     ranks: [
         { min: 101, title: "💎 SS級 神話級玩家" },
         { min: 96,  title: "🌟 S級 傳說級玩家" },
@@ -24,14 +25,24 @@ const GameEngine = {
         { min: 0,   title: "🥚 報到新手村" }
     ],
 
-    // 六大試煉的資料庫 (baseProg 為主線基礎進度，最高 90%)
+    // 防具真實升級路徑 (不再跳級)
+    armorPath: ['👕 粗製布衣', '🧥 強化布衫', '🥋 實習皮甲', '🦺 輕型鎖甲', '🛡️ 鋼鐵重甲', '💠 秘銀胸甲', '🛡️ 聖光戰鎧', '🌟 永恆守護鎧'],
+
+    // 武器真實升級路徑
+    weaponPaths: {
+        '🗡️ 精鋼短劍': '⚔️ 騎士長劍', '⚔️ 騎士長劍': '⚔️ 破甲重劍', '⚔️ 破甲重劍': '🗡️ 聖光戰劍', '🗡️ 聖光戰劍': '👑 王者之聖劍',
+        '🏹 獵人短弓': '🏹 精靈長弓', '🏹 精靈長弓': '🏹 迅雷連弓', '🏹 迅雷連弓': '🏹 追風神弓', '🏹 追風神弓': '☄️ 破曉流星弓',
+        '🔱 鐵尖長槍': '🔱 鋼鐵戰矛', '🔱 鋼鐵戰矛': '🔱 破陣重矛', '🔱 破陣重矛': '🔱 龍膽銀槍', '🔱 龍膽銀槍': '🐉 滅世龍吟槍'
+    },
+
+    // 六大試煉主線資料庫 (baseProg 為主線基礎進度，最高 90%)
     trialsData: {
-        1: { baseProg: 10, loc: '🏰 登錄公會', armor: '🥋 實習皮甲', wUpgrade: null, scoreGain: 5 },
-        2: { baseProg: 25, loc: '📁 裝備盤點', armor: '🦺 輕型鎖甲', wUpgrade: null, scoreGain: 5 },
-        3: { baseProg: 40, loc: '🛡️ 裝備鑑定所', armor: '🛡️ 鋼鐵重甲', wUpgrade: { '🗡️ 精鋼短劍':'⚔️ 騎士長劍', '🏹 獵人短弓':'🏹 精靈長弓', '🔱 鐵尖長槍':'🔱 鋼鐵戰矛'}, scoreGain: 10 },
-        4: { baseProg: 60, loc: '🎒 出征準備營', armor: '💠 秘銀胸甲', wUpgrade: { '⚔️ 騎士長劍':'⚔️ 破甲重劍', '🏹 精靈長弓':'🏹 迅雷連弓', '🔱 鋼鐵戰矛':'🔱 破陣重矛'}, scoreGain: 10 },
-        5: { baseProg: 80, loc: '💼 契約祭壇',   armor: '🛡️ 聖光戰鎧', wUpgrade: { '⚔️ 破甲重劍':'🗡️ 聖光戰劍', '🏹 迅雷連弓':'🏹 追風神弓', '🔱 破陣重矛':'🔱 龍膽銀槍'}, scoreGain: 10 },
-        6: { baseProg: 90, loc: '👑 榮耀殿堂',   armor: '🌟 永恆守護鎧', wUpgrade: { '🗡️ 聖光戰劍':'👑 王者之聖劍', '🏹 追風神弓':'☄️ 破曉流星弓', '🔱 龍膽銀槍':'🐉 滅世龍吟槍'}, scoreGain: 10 }
+        1: { baseProg: 10, loc: '🏰 登錄公會', scoreGain: 5 },
+        2: { baseProg: 25, loc: '📁 裝備盤點', scoreGain: 5 },
+        3: { baseProg: 40, loc: '🛡️ 裝備鑑定所', scoreGain: 10 },
+        4: { baseProg: 60, loc: '🎒 出征準備營', scoreGain: 10 },
+        5: { baseProg: 80, loc: '💼 契約祭壇', scoreGain: 10 },
+        6: { baseProg: 90, loc: '👑 榮耀殿堂', scoreGain: 10 }
     },
 
     init() {
@@ -120,8 +131,6 @@ const GameEngine = {
                     scoreFill.style.backgroundColor = "#fbbf24";
                 }
             }
-            
-            // 隱藏成就觸發後，也要更新進度條
             this.updateUI(true);
         };
 
@@ -157,16 +166,24 @@ const GameEngine = {
         
         this.state.currentTrial = trialNum;
         this.state.location = tData.loc;
-        this.state.score += tData.scoreGain; // 正式加入闖關得分
+        this.state.score += tData.scoreGain; 
         
-        const armorList = ['👕 粗製布衣', '🧥 強化布衫', '🥋 實習皮甲', '🦺 輕型鎖甲', '🛡️ 鋼鐵重甲', '💠 秘銀胸甲', '🛡️ 聖光戰鎧', '🌟 永恆守護鎧'];
-        this.state.items = this.state.items.map(item => armorList.includes(item) ? tData.armor : item);
+        // 【嚴格防呆防具升級】：掃描現在穿的衣服，強制只升一階
+        const currentArmor = this.state.items.find(i => this.armorPath.includes(i));
+        if (currentArmor) {
+            const currentIndex = this.armorPath.indexOf(currentArmor);
+            if (currentIndex < this.armorPath.length - 1) {
+                const nextArmor = this.armorPath[currentIndex + 1];
+                this.state.items = this.state.items.map(i => i === currentArmor ? nextArmor : i);
+            }
+        }
 
-        if (tData.wUpgrade && this.state.weaponType) {
-            const upgradedWeapon = tData.wUpgrade[this.state.weaponType];
-            if (upgradedWeapon) {
-                this.state.items = this.state.items.map(item => item === this.state.weaponType ? upgradedWeapon : item);
-                this.state.weaponType = upgradedWeapon; 
+        // 【殘酷武器升級】：第三階段起才開始升，有武器才給升，沒拿就是空手！
+        if (trialNum >= 3 && this.state.weaponType) {
+            const nextWeapon = this.weaponPaths[this.state.weaponType];
+            if (nextWeapon) {
+                this.state.items = this.state.items.map(i => i === this.state.weaponType ? nextWeapon : i);
+                this.state.weaponType = nextWeapon; 
             }
         }
 
@@ -175,7 +192,7 @@ const GameEngine = {
         const newScore = this.state.score;
         const newRank = this.ranks.find(r => this.state.score >= r.min) || this.ranks[this.ranks.length - 1];
 
-        // 計算動態進度：主線進度 + (隱藏成就數量 * 5%)，最高鎖定 100%
+        // 計算動態進度：主線進度 + (隱藏成就數量 * 5%)，最高 100%
         const hiddenBonus = Math.min(10, this.state.achievements.length * 5);
         const newProg = Math.min(100, tData.baseProg + hiddenBonus);
 
@@ -226,6 +243,14 @@ const GameEngine = {
                 progFill.classList.add('bar-flash'); 
                 setTimeout(() => progFill.classList.remove('bar-flash'), 1500);
             }
+
+            // 【終極殘酷嘲諷結局】：第 6 關破關且未持有武器
+            if (trialNum === 6 && !this.state.weaponType) {
+                setTimeout(() => {
+                    alert("📝 系統判定：\n勇者雖已通關，但未詳閱《鍛造秘笈》，\n全程赤手空拳完成試煉...敬佩！敬佩！");
+                }, 1000);
+            }
+
         }, 5000); 
     },
 
