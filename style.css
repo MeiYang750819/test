@@ -130,7 +130,6 @@ body.page-1 .sticky-bar { background: var(--p1-headerColor); color: var(--p1-tit
 body.page-2 { background: var(--p2-bgColor); background-attachment: fixed; color: var(--p2-textColor); }
 body.page-2 .sticky-bar { background: var(--p2-headerColor); color: var(--p2-titleColor); }
 
-/* ✨ 這裡補上第三頁的背景設定，解決反白問題 ✨ */
 body.page-3 { background: var(--p3-bgColor); background-attachment: fixed; color: var(--p3-textColor); }
 body.page-3 .sticky-bar { background: var(--p3-headerColor); color: var(--p3-titleColor); }
 
@@ -248,6 +247,7 @@ details details { box-shadow: none; margin-bottom: 0; border-radius: 0; border: 
 .text-red { color: #ef4444; font-weight: bold; }
 .text-lightred { color: #ff8a8a; font-weight: bold; } /* 淺紅 */
 .text-lightblue { color: #8ab4f8; font-weight: bold; } /* 淺藍 */
+.text-purple { color: #a855f7; font-weight: bold; } /* 警戒紫 (用於 40 分以下說明) */
 
 /* ================================================================
 【 🎡 左右滑動專用容器 & 🔍 放大遮罩層 】
