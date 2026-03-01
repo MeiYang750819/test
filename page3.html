@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💼 勇者入職試煉</title>
+
+    <meta property="og:title" content="🛠️｜MYs系統｜新手村登入區" />
+    <meta property="og:description" content="闖關冒險即將開始！詳閱任務指南並完成關卡，解鎖職場新身分！" />
+    <meta property="og:image" content="https://MeiYang750819.github.io/test2/assets/img1/MYs_logo_去背1.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://MeiYang750819.github.io/test2/" />
+
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="nav.css">
     <script src="game-engine.js"></script>
@@ -38,7 +45,7 @@
             flex-shrink: 0; 
         }
 
-        /* 修復第二關「其他」改為底線樣式 */
+        /* 第二關「其他」改為底線樣式 */
         .underline-input {
             background: transparent;
             border: none;
@@ -198,6 +205,7 @@
 
     <main class="tab-content active">
 
+        
         <details>
             <summary class="main-summary">【新手報到】啟程點</summary>
             <div class="details-body">
@@ -230,7 +238,7 @@
                 <label class="check-item"><input type="checkbox"> 台新國際商業銀行-實體存摺</label>
                 <label class="check-item"><input type="checkbox"> 中餐證照</label>
                 <label class="check-item"><input type="checkbox"> 西餐證照</label>
-                <label class="check-item"><input type="checkbox"> 其他：<input type="text" class="underline-input"></label>
+                <label class="check-item">其他：<input type="text" class="underline-input"></label>
                 
                 <div class="action-center">
                     <button class="btn-confirm" id="btn-trial-2" onclick="GameEngine.completeTrial(event, 2)">✓ 完成裝備盤點</button>
@@ -354,7 +362,6 @@
     </footer>
 
     <script>
-        /* 🎯 修復點：確保頂部資訊列能夠正常運作的數據初始化 */
         const fetchedData = { 
             companyName: "FIZZ FIZZ.TAIPEI", 
             team: "外場團隊", 
@@ -369,7 +376,6 @@
             document.querySelectorAll('.dyn-name').forEach(el => el.innerText = data.userName);
         }
 
-        /* 頁面載入後執行初始化 */
         window.addEventListener('load', () => {
             applyData(fetchedData);
             if (typeof GameEngine !== 'undefined') {
@@ -377,7 +383,6 @@
             }
         });
 
-        /* 關卡檢查腳本 */
         function checkTrial1(e) {
             const chk1 = document.getElementById('chk-guide').checked;
             const chk2 = document.getElementById('chk-forge').checked;
