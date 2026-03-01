@@ -1,5 +1,5 @@
 /* ================================================================
-   【 ⚙️ GAME ENGINE - 六大試煉與自動修復版 】
+   【 ⚙️ GAME ENGINE - 九階雷達與動態進度版 】
    ================================================================ */
 const GameEngine = {
     state: {
@@ -18,18 +18,20 @@ const GameEngine = {
         { min: 80,  title: "🟢 A級 菁英玩家" },
         { min: 60,  title: "🥇 B級 穩健玩家" },
         { min: 40,  title: "🥈 C級 潛力玩家" },
-        { min: 1,   title: "🥉 實習小萌新" },
+        { min: 30,  title: "🥉 D級 基礎學徒" },
+        { min: 20,  title: "💀 E級 迷途村民" },
+        { min: 2,   title: "🌱 實習小萌新" },
         { min: 0,   title: "🥚 報到新手村" }
     ],
 
-    // 六大試煉的資料庫 (進度、關卡、衣服升級、武器升級對照表)
+    // 六大試煉的資料庫 (baseProg 為主線基礎進度，最高 90%)
     trialsData: {
-        1: { prog: 10,  loc: '🏰 登錄公會', armor: '🥋 實習皮甲', wUpgrade: null },
-        2: { prog: 25,  loc: '📁 裝備盤點', armor: '🦺 輕型鎖甲', wUpgrade: null }, // 第二區還不升武器
-        3: { prog: 40,  loc: '🛡️ 裝備鑑定所', armor: '🛡️ 鋼鐵重甲', wUpgrade: { '🗡️ 精鋼短劍':'⚔️ 騎士長劍', '🏹 獵人短弓':'🏹 精靈長弓', '🔱 鐵尖長槍':'🔱 鋼鐵戰矛'} },
-        4: { prog: 60,  loc: '🎒 出征準備營', armor: '💠 秘銀胸甲', wUpgrade: { '⚔️ 騎士長劍':'⚔️ 破甲重劍', '🏹 精靈長弓':'🏹 迅雷連弓', '🔱 鋼鐵戰矛':'🔱 破陣重矛'} },
-        5: { prog: 80,  loc: '💼 契約祭壇',   armor: '🛡️ 聖光戰鎧', wUpgrade: { '⚔️ 破甲重劍':'🗡️ 聖光戰劍', '🏹 迅雷連弓':'🏹 追風神弓', '🔱 破陣重矛':'🔱 龍膽銀槍'} },
-        6: { prog: 100, loc: '👑 榮耀殿堂',   armor: '🌟 永恆守護鎧', wUpgrade: { '🗡️ 聖光戰劍':'👑 王者之聖劍', '🏹 追風神弓':'☄️ 破曉流星弓', '🔱 龍膽銀槍':'🐉 滅世龍吟槍'} }
+        1: { baseProg: 10, loc: '🏰 登錄公會', armor: '🥋 實習皮甲', wUpgrade: null, scoreGain: 5 },
+        2: { baseProg: 25, loc: '📁 裝備盤點', armor: '🦺 輕型鎖甲', wUpgrade: null, scoreGain: 5 },
+        3: { baseProg: 40, loc: '🛡️ 裝備鑑定所', armor: '🛡️ 鋼鐵重甲', wUpgrade: { '🗡️ 精鋼短劍':'⚔️ 騎士長劍', '🏹 獵人短弓':'🏹 精靈長弓', '🔱 鐵尖長槍':'🔱 鋼鐵戰矛'}, scoreGain: 10 },
+        4: { baseProg: 60, loc: '🎒 出征準備營', armor: '💠 秘銀胸甲', wUpgrade: { '⚔️ 騎士長劍':'⚔️ 破甲重劍', '🏹 精靈長弓':'🏹 迅雷連弓', '🔱 鋼鐵戰矛':'🔱 破陣重矛'}, scoreGain: 10 },
+        5: { baseProg: 80, loc: '💼 契約祭壇',   armor: '🛡️ 聖光戰鎧', wUpgrade: { '⚔️ 破甲重劍':'🗡️ 聖光戰劍', '🏹 迅雷連弓':'🏹 追風神弓', '🔱 破陣重矛':'🔱 龍膽銀槍'}, scoreGain: 10 },
+        6: { baseProg: 90, loc: '👑 榮耀殿堂',   armor: '🌟 永恆守護鎧', wUpgrade: { '🗡️ 聖光戰劍':'👑 王者之聖劍', '🏹 追風神弓':'☄️ 破曉流星弓', '🔱 龍膽銀槍':'🐉 滅世龍吟槍'}, scoreGain: 10 }
     },
 
     init() {
@@ -37,7 +39,6 @@ const GameEngine = {
             const saved = localStorage.getItem('hero_progress');
             if (saved) { 
                 const parsed = JSON.parse(saved);
-                // 防呆修復：完美合併舊存檔與新預設值，避免缺少 currentTrial 欄位導致當機
                 this.state = Object.assign({}, this.state, parsed);
                 if (!Array.isArray(this.state.achievements)) {
                     this.state.achievements = [];
@@ -48,13 +49,11 @@ const GameEngine = {
             localStorage.removeItem('hero_progress');
         }
         
-        // 延遲一點點確保 HTML 渲染完畢再更新文字，避免 "載入中..." 卡住
         setTimeout(() => { this.updateUI(true); }, 50);
     },
 
     save() { localStorage.setItem('hero_progress', JSON.stringify(this.state)); },
 
-    // 開發測試專用：清除記憶
     reset() {
         localStorage.removeItem('hero_progress');
         alert("♻️ 冒險記憶已清除！點擊確定後將重新載入。");
@@ -62,11 +61,7 @@ const GameEngine = {
     },
 
     unlock(event, id, label, scoreGain, action = null) {
-        // 如果這個成就 id 已經在陣列裡，代表領過獎勵了，直接退出不觸發！
-        if (this.state.achievements.includes(id)) { 
-            console.log(`[GameEngine] ${label} 已經觸發過囉！`);
-            return; 
-        }
+        if (this.state.achievements.includes(id)) { return; }
 
         const oldRank = this.ranks.find(r => this.state.score >= r.min) || this.ranks[this.ranks.length - 1];
         const oldScore = this.state.score;
@@ -125,6 +120,9 @@ const GameEngine = {
                     scoreFill.style.backgroundColor = "#fbbf24";
                 }
             }
+            
+            // 隱藏成就觸發後，也要更新進度條
+            this.updateUI(true);
         };
 
         if (scoreGain >= 2) {
@@ -138,16 +136,14 @@ const GameEngine = {
         }
     },
 
-    // ⚔️ 試煉通關指令
     completeTrial(event, trialNum) {
         if (this.state.currentTrial >= trialNum) {
-            alert("⚠️ 此階段任務已經完成了，請繼續前進！");
+            alert("⚠️ 此階段任務已完成，請繼續前進！");
             return;
         }
 
-        // 防呆：必須照順序解鎖
         if (trialNum > 1 && this.state.currentTrial < trialNum - 1) {
-            alert("⚠️ 請先完成前一個階段的任務！");
+            alert("⚠️ 勿著急，請先完成前一個階段任務！");
             return;
         }
 
@@ -156,15 +152,16 @@ const GameEngine = {
 
         const oldLoc = this.state.location;
         const oldItemsStr = this.state.items.join(' ');
+        const oldScore = this.state.score;
+        const oldRank = this.ranks.find(r => this.state.score >= r.min) || this.ranks[this.ranks.length - 1];
         
         this.state.currentTrial = trialNum;
         this.state.location = tData.loc;
+        this.state.score += tData.scoreGain; // 正式加入闖關得分
         
-        // 更新防具清單 (加入了第5階的 🛡️ 聖光戰鎧)
         const armorList = ['👕 粗製布衣', '🧥 強化布衫', '🥋 實習皮甲', '🦺 輕型鎖甲', '🛡️ 鋼鐵重甲', '💠 秘銀胸甲', '🛡️ 聖光戰鎧', '🌟 永恆守護鎧'];
         this.state.items = this.state.items.map(item => armorList.includes(item) ? tData.armor : item);
 
-        // 更新武器 (第三階段才開始觸發)
         if (tData.wUpgrade && this.state.weaponType) {
             const upgradedWeapon = tData.wUpgrade[this.state.weaponType];
             if (upgradedWeapon) {
@@ -175,12 +172,18 @@ const GameEngine = {
 
         this.save();
         const newItemsStr = this.state.items.join(' ');
+        const newScore = this.state.score;
+        const newRank = this.ranks.find(r => this.state.score >= r.min) || this.ranks[this.ranks.length - 1];
+
+        // 計算動態進度：主線進度 + (隱藏成就數量 * 5%)，最高鎖定 100%
+        const hiddenBonus = Math.min(10, this.state.achievements.length * 5);
+        const newProg = Math.min(100, tData.baseProg + hiddenBonus);
 
         if (event && event.clientX) {
             const floater = document.createElement('div');
             floater.className = 'floating-score';
             floater.style.color = '#10b981'; 
-            floater.innerText = `✓ 任務完成！`;
+            floater.innerText = `✓ 任務完成！ +${tData.scoreGain}分`;
             floater.style.left = `${event.clientX - 20}px`;
             floater.style.top = `${event.clientY - 20}px`; 
             document.body.appendChild(floater);
@@ -198,12 +201,27 @@ const GameEngine = {
                 this.triggerFlashAndUpdate(itemSpan, newItemsStr);
             }
 
+            if (oldScore !== newScore) {
+                const scoreSpan = document.getElementById('score-text');
+                if (scoreSpan) this.triggerFlashAndUpdate(scoreSpan, newScore + "分");
+                const scoreFill = document.getElementById('score-fill');
+                if (scoreFill) {
+                    scoreFill.style.width = Math.min(newScore, 100) + "%";
+                    scoreFill.style.backgroundColor = "#fbbf24";
+                }
+            }
+
+            if (oldRank.title !== newRank.title) {
+                const rankSpan = document.getElementById('dyn-rank');
+                if (rankSpan) this.triggerFlashAndUpdate(rankSpan, newRank.title);
+            }
+
             const progVal = document.getElementById('prog-val');
             const progFill = document.getElementById('prog-fill');
-            if (progVal) this.triggerFlashAndUpdate(progVal, tData.prog + "%");
+            if (progVal) this.triggerFlashAndUpdate(progVal, newProg + "%");
             if (progFill) {
-                progFill.style.width = tData.prog + "%";
-                const hue = (tData.prog / 100) * 120;
+                progFill.style.width = newProg + "%";
+                const hue = (newProg / 100) * 120;
                 progFill.style.backgroundColor = `hsl(${hue}, 80%, 55%)`;
                 progFill.classList.add('bar-flash'); 
                 setTimeout(() => progFill.classList.remove('bar-flash'), 1500);
@@ -239,7 +257,10 @@ const GameEngine = {
         }
         
         if (isInit) {
-            const currentProg = this.state.currentTrial > 0 ? this.trialsData[this.state.currentTrial].prog : 0;
+            const hiddenBonus = Math.min(10, this.state.achievements.length * 5);
+            const baseProg = this.state.currentTrial > 0 ? this.trialsData[this.state.currentTrial].baseProg : 0;
+            const currentProg = Math.min(100, baseProg + hiddenBonus);
+            
             if (progVal) progVal.innerText = currentProg + "%";
             if (progFill) {
                 progFill.style.width = currentProg + "%";
