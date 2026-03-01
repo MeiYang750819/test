@@ -11,21 +11,28 @@
         /* 針對第三分頁專屬的緊湊排版微調 */
         .details-body {
             text-align: left;
-            line-height: 1.2; /* 極致縮小整體行距 */
+            line-height: 1.15; /* 極致縮小整體行距 */
             padding-top: 8px; /* 縮小內部頂端空間 */
             padding-bottom: 12px;
         }
         .task-target {
             color: #efefef;
             font-weight: bold;
-            margin-bottom: 8px; /* 標題跟選項的距離縮小 */
+            margin-bottom: 4px; /* 標題跟下方說明距離壓小 */
+            display: block;
+        }
+        .task-desc {
+            color: #efefef;
+            font-size: 14px;
+            margin-bottom: 4px; /* 說明清單的行距壓小 */
+            margin-left: 20px; /* 做出向右縮排的層次感 */
             display: block;
         }
         /* 選項與打勾框的精準緊密對齊 */
         .check-item {
             display: flex;
             align-items: center;
-            margin-bottom: 4px; /* 極致縮小每個選項的間距 */
+            margin-bottom: 2px; /* 極致縮小每個打勾選項的間距 */
             cursor: pointer;
             font-size: 14px;
         }
@@ -101,8 +108,9 @@
         <details>
             <summary class="main-summary">【新手報到】啟程點</summary>
             <div class="details-body">
-                <span class="task-target">📣 任務目標：確認已詳閱入職規範.</span>
-                
+                <span class="task-target">📣 任務目標</span>
+                <span class="task-desc">- 確認已詳閱入職規範.</span>
+                <br>
                 <label class="check-item"><input type="checkbox" id="chk-guide"> 我已閱讀「📜 冒險指南」</label>
                 <label class="check-item"><input type="checkbox" id="chk-forge"> 我已閱讀「🏹 鍛造秘笈」</label>
                 <label class="check-item"><input type="checkbox" id="chk-risk"> ⚠️ 若被退件「 本人承擔」</label>
@@ -116,8 +124,10 @@
         <details>
             <summary class="main-summary">【裝備盤點】行囊區</summary>
             <div class="details-body">
-                <span class="task-target">📣 任務目標：是否具備以下四大文件，若無直接按確認即可.</span>
-                
+                <span class="task-target">📣 任務目標</span>
+                <span class="task-desc">- 是否有以下四大文件.</span>
+                <span class="task-desc">- 若無直接按確認即可.</span>
+                <br>
                 <label class="check-item"><input type="checkbox"> 台新國際商業銀行-實體存摺</label>
                 <label class="check-item"><input type="checkbox"> 中餐證照</label>
                 <label class="check-item"><input type="checkbox"> 西餐證照</label>
@@ -132,8 +142,9 @@
         <details>
             <summary class="main-summary">【裝備強化】準備期</summary>
             <div class="details-body">
-                <span class="task-target">📣 任務目標：請上傳您的五大必備文件，進入裝備鑑定所。</span>
-                <span style="font-size: 13px; color: #b7b7b7;">(此區未來將連動後台審核機制)</span>
+                <span class="task-target">📣 任務目標</span>
+                <span class="task-desc">- 請上傳您的五大必備文件，進入裝備鑑定所。</span>
+                <span class="task-desc" style="font-size: 13px; color: #b7b7b7; margin-left: 0;">(此區未來將連動後台審核機制)</span>
                 
                 <div class="action-center">
                     <button class="btn-confirm" onclick="GameEngine.completeTrial(event, 3)">✓ 確認完成裝備強化</button>
@@ -144,7 +155,8 @@
         <details>
             <summary class="main-summary">【戰前整備】複習期</summary>
             <div class="details-body">
-                <span class="task-target">📣 任務目標：再次確認實體報到時間與地點，準備出征！</span>
+                <span class="task-target">📣 任務目標</span>
+                <span class="task-desc">- 再次確認實體報到時間與地點，準備出征！</span>
                 
                 <div class="action-center">
                     <button class="btn-confirm" onclick="GameEngine.completeTrial(event, 4)">✓ 確認完成戰前整備</button>
@@ -155,7 +167,8 @@
         <details>
             <summary class="main-summary">【最終考驗】報到日</summary>
             <div class="details-body">
-                <span class="task-target">📣 任務目標：報到當日，線上簽署正式僱傭契約。</span>
+                <span class="task-target">📣 任務目標</span>
+                <span class="task-desc">- 報到當日，線上簽署正式僱傭契約。</span>
                 
                 <div class="action-center">
                     <button class="btn-confirm" onclick="GameEngine.completeTrial(event, 5)">✓ 確認完成最終考驗</button>
@@ -166,7 +179,8 @@
         <details>
             <summary class="main-summary">【完成試煉】決斷區</summary>
             <div class="details-body">
-                <span class="task-target">📣 任務目標：主管與人資最終決斷放行，踏入榮耀殿堂！</span>
+                <span class="task-target">📣 任務目標</span>
+                <span class="task-desc">- 主管與人資最終決斷放行，踏入榮耀殿堂！</span>
                 
                 <div class="action-center">
                     <button class="btn-confirm" style="color:#fbbf24; border-color:#fbbf24;" onclick="GameEngine.completeTrial(event, 6)">👑 迎接最終榮耀 (完成試煉)</button>
